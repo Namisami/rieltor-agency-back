@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Client, Agent, Types, Object, District, Offer, Need, Deal
+from .models import Client, Agent, ObjectType, Object, District, Offer, Demand, Deal
 
 class ClientSerializers(serializers.HyperlinkedModelSerializer):
     class Meta:
@@ -11,9 +11,9 @@ class AgentSerializers(serializers.HyperlinkedModelSerializer):
         model = Agent
         fields = '__all__'
 
-class TypesSerializers(serializers.HyperlinkedModelSerializer):
+class ObjectTypeSerializers(serializers.HyperlinkedModelSerializer):
     class Meta:
-        model = Types
+        model = ObjectType
         fields = '__all__'
 
 class ObjectSerializers(serializers.HyperlinkedModelSerializer):
@@ -31,9 +31,9 @@ class OfferSerializers(serializers.HyperlinkedModelSerializer):
         model = Offer
         fields = '__all__'
 
-class NeedSerializers(serializers.HyperlinkedModelSerializer):
+class DemandSerializers(serializers.HyperlinkedModelSerializer):
     class Meta:
-        model = Need
+        model = Demand
         fields = '__all__'
 
 class DealSerializers(serializers.HyperlinkedModelSerializer):

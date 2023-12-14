@@ -59,8 +59,8 @@ class Object(models.Model):
     address_street = models.CharField(max_length=200, verbose_name='Улица')
     address_house = models.CharField(max_length=200, verbose_name='Дом')
     address_number = models.CharField(max_length=200, verbose_name='Номер дома')
-    latitude = models.DecimalField(max_digits=9, decimal_places=6, validators=[MinValueValidator(-90), MaxValueValidator(90)])
-    logitude = models.DecimalField(max_digits=9, decimal_places=6, validators=[MinValueValidator(-180), MaxValueValidator(180)])
+    latitude = models.DecimalField(max_digits=15, decimal_places=12, validators=[MinValueValidator(-90), MaxValueValidator(90)])
+    logitude = models.DecimalField(max_digits=15, decimal_places=12, validators=[MinValueValidator(-180), MaxValueValidator(180)])
     total_area = models.DecimalField(verbose_name='Площадь', max_digits=4, decimal_places=1)
 
     rooms = models.IntegerField(verbose_name='Количество комнат', null=True)

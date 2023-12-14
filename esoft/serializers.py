@@ -24,7 +24,7 @@ class ObjectSerializers(serializers.HyperlinkedModelSerializer):
             self.Meta.depth = 0
         else:
             self.Meta.depth = 1
-            
+
     class Meta:
         model = Object
         fields = '__all__'
@@ -41,6 +41,14 @@ class OfferSerializers(serializers.HyperlinkedModelSerializer):
         fields = '__all__'
 
 class DemandSerializers(serializers.HyperlinkedModelSerializer):
+    def __init__(self, *args, **kwargs):
+        super(DemandSerializers, self).__init__(*args, **kwargs)
+        request = self.context.get('request')
+        if request and (request.method == 'POST' or request.method == 'PUT' or request.method == 'PATCH'):
+            self.Meta.depth = 0
+        else:
+            self.Meta.depth = 1
+            
     class Meta:
         model = Demand
         fields = '__all__'

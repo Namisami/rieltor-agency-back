@@ -63,10 +63,24 @@ class ObjectViewSet(viewsets.ModelViewSet):
         self.queryset = Object.objects.all()
         district = self.request.query_params.get('district')
         if district is not None:
-            min_distance = 1000
-            for district_obj in District.objects.all():
-                cords = cord_string_into_list(district_obj.area)
-            # self.queryset = [query for query in self.queryset if distance(query.address_city, city) <= 3]
+            district_obj = District.objects.get(name=district)
+            # for district_obj in District.objects.all():
+            cords = cord_string_into_list(district_obj.area)
+            min_lat = 10000
+            min_log = 10000
+            max_lat = 0
+            max_log = 0
+            for lat, log in cords:
+                if lat < min_lat:
+                    min_lat = lat
+                if log < min_log:
+                    min_log = log
+                if lat > max_lat:
+                    max_lat = lat
+                if log > max_log:
+                    max_log = log
+            print(min_log, min_lat, max_log, max_lat)
+            self.queryset = [query for query in self.queryset if (query.latitude in [min_lat, max_lat]) and (query.logitude in [min_log, max_log])]
         city = self.request.query_params.get('city')
         if city is not None:
             self.queryset = [query for query in self.queryset if distance(query.address_city, city) <= 3]

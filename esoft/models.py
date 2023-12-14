@@ -40,8 +40,8 @@ class Agent(models.Model):
 #         verbose_name = 'Координата'
 #         verbose_name_plural = 'Координаты'
 
-    def __str__(self):
-        return f'({self.latitude}; {self.logitude})'
+    # def __str__(self):
+    #     return f'({self.latitude}; {self.logitude})'
 
 class ObjectType(models.Model):
     name = models.CharField(max_length=255, verbose_name='Тип')
@@ -99,6 +99,7 @@ class Demand(models.Model):
     max_price = models.IntegerField(verbose_name='Максимальная цена', null=True)
     agent = models.ForeignKey(to=Agent, on_delete=models.PROTECT, verbose_name='Риэлтор')
     client = models.ForeignKey(to=Client, on_delete=models.PROTECT, verbose_name='Клиент')
+    type = models.ForeignKey(to=ObjectType, on_delete=models.PROTECT, verbose_name='Тип объекта недвижимости')
     min_area = models.IntegerField(verbose_name='Минимальная площадь', null=True)
     max_area = models.IntegerField(verbose_name='Максимальная площадь', null=True)
 

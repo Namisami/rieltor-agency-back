@@ -1,6 +1,8 @@
 from rest_framework import viewsets
+from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 from Levenshtein import distance
+from rest_framework.decorators import action
 from .serializers import ClientSerializers, AgentSerializers, ObjectSerializers, OfferSerializers, DemandSerializers, DealSerializers, ObjectTypeSerializers, DistrictSerializers
 from .models import Client, Agent, Object, Offer, Demand, Deal, ObjectType, District
 
@@ -15,6 +17,13 @@ class ClientViewSet(viewsets.ModelViewSet):
             first_name, middle_name, last_name = fio.split(' ')
             self.queryset = [query for query in self.queryset if distance(query.firstname, first_name) <= 3 and distance(query.lastname, last_name) <= 3 and distance(query.middlename, middle_name) <= 3]
         return self.queryset
+    
+    @action(methods=['get'], detail=True)
+    def deals(self, request, pk):
+        offers = OfferSerializers(Offer.objects.filter(client__id=pk), many=True, context={'request': request})
+        demands = DemandSerializers(Demand.objects.filter(client__id=pk), many=True, context={'request': request})
+        print(offers.data, demands.data)
+        return Response(data={'offers': offers.data, 'demands': demands.data})
 
 class AgentViewSet(viewsets.ModelViewSet):
     queryset = Agent.objects.all()

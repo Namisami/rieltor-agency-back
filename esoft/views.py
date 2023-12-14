@@ -36,6 +36,13 @@ class AgentViewSet(viewsets.ModelViewSet):
             first_name, middle_name, last_name = fio.split(' ')
             self.queryset = [query for query in self.queryset if distance(query.firstname, first_name) <= 3 and distance(query.lastname, last_name) <= 3 and distance(query.middlename, middle_name) <= 3]
         return self.queryset
+    
+    @action(methods=['get'], detail=True)
+    def deals(self, request, pk):
+        offers = OfferSerializers(Offer.objects.filter(agent__id=pk), many=True, context={'request': request})
+        demands = DemandSerializers(Demand.objects.filter(agent__id=pk), many=True, context={'request': request})
+        print(offers.data, demands.data)
+        return Response(data={'offers': offers.data, 'demands': demands.data})
 
 
 class DistrictViewSet(viewsets.ModelViewSet):

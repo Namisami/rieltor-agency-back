@@ -54,6 +54,9 @@ class ObjectViewSet(viewsets.ModelViewSet):
         city = self.request.query_params.get('city')
         if city is not None:
             self.queryset = [query for query in self.queryset if distance(query.address_city, city) <= 3]
+        obj_type = self.request.query_params.get('type')
+        if obj_type is not None:
+            self.queryset = [query for query in self.queryset if query.type.name == obj_type]
         street = self.request.query_params.get('street')
         if street is not None:
             self.queryset = [query for query in self.queryset if distance(query.address_street, street) <= 3]

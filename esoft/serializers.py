@@ -17,9 +17,18 @@ class ObjectTypeSerializers(serializers.HyperlinkedModelSerializer):
         fields = '__all__'
 
 class ObjectSerializers(serializers.HyperlinkedModelSerializer):
+    def __init__(self, *args, **kwargs):
+        super(ObjectSerializers, self).__init__(*args, **kwargs)
+        request = self.context.get('request')
+        if request and (request.method == 'POST' or request.method == 'PUT' or request.method == 'PATCH'):
+            self.Meta.depth = 0
+        else:
+            self.Meta.depth = 1
+            
     class Meta:
         model = Object
         fields = '__all__'
+
 
 class DistrictSerializers(serializers.HyperlinkedModelSerializer):
     class Meta:

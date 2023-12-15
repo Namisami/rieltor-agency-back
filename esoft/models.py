@@ -2,6 +2,7 @@ from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.contrib.contenttypes.fields import GenericForeignKey
+import math
 
 class Client(models.Model):
     first_name = models.CharField(max_length=50, verbose_name='Фамилия')
@@ -57,8 +58,8 @@ class ObjectType(models.Model):
 class Object(models.Model):
     address_city = models.CharField(max_length=200, verbose_name='Город')
     address_street = models.CharField(max_length=200, verbose_name='Улица')
-    address_house = models.CharField(max_length=200, verbose_name='Дом', null=True)
-    address_number = models.CharField(max_length=200, verbose_name='Номер дома', null=True)
+    address_house = models.CharField(max_length=200, verbose_name='Дом', blank=True)
+    address_number = models.CharField(max_length=200, verbose_name='Номер дома', blank=True)
     latitude = models.DecimalField(max_digits=15, decimal_places=12, validators=[MinValueValidator(-90), MaxValueValidator(90)])
     logitude = models.DecimalField(max_digits=15, decimal_places=12, validators=[MinValueValidator(-180), MaxValueValidator(180)])
     total_area = models.DecimalField(verbose_name='Площадь', max_digits=4, decimal_places=1)
@@ -117,6 +118,12 @@ class Demand(models.Model):
 
     def __str__(self):
         return f'{self.client}'
+    
+    @property
+    def active(self):
+        if Deal.objects.filter(demand__id=self.id).count() > 0:
+            return 0
+        return 1
 
 
 class Offer(models.Model):
@@ -130,7 +137,7 @@ class Offer(models.Model):
         verbose_name_plural = 'Предложения'
 
     def __str__(self):
-        return f'{self.agent} -> {self.client}'
+        return f'{self.client}'
 
 
 class Deal(models.Model):
@@ -140,3 +147,61 @@ class Deal(models.Model):
     class Meta:
         verbose_name = 'Сделка'
         verbose_name_plural = 'Сделки' 
+
+    def __str__(self):
+        return f'{self.supply} <- {self.demand}'
+    
+    @property
+    def seller_price(self):
+        if self.supply.real_estate.type.name == 'Квартира':
+            return math.floor(36000 + 0.01 * self.supply.price)
+        if self.supply.real_estate.type.name == 'Участок':
+            return math.floor(30000 + 0.02 * self.supply.price)
+        if self.supply.real_estate.type.name == 'Дом':
+            return math.floor(30000 + 0.01 * self.supply.price)
+        
+    @property
+    def buyer_price(self):
+        return math.floor(self.supply.price * 0.03)
+    
+    @property
+    def seller_agent_price(self):
+        price = 0
+        if self.supply.real_estate.type.name == 'Квартира':
+            price += 36000 + 0.01 * self.supply.price
+        if self.supply.real_estate.type.name == 'Участок':
+            price += 30000 + 0.02 * self.supply.price
+        if self.supply.real_estate.type.name == 'Дом':
+            price += 30000 + 0.01 * self.supply.price
+        price += self.supply.price * 0.03
+        sa_percent = self.supply.agent.deal_share
+        ba_percent = self.demand.agent.deal_share
+        return math.floor(price * (sa_percent / 200))
+    
+    @property
+    def buyer_agent_price(self):
+        price = 0
+        if self.supply.real_estate.type.name == 'Квартира':
+            price += 36000 + 0.01 * self.supply.price
+        if self.supply.real_estate.type.name == 'Участок':
+            price += 30000 + 0.02 * self.supply.price
+        if self.supply.real_estate.type.name == 'Дом':
+            price += 30000 + 0.01 * self.supply.price
+        price += self.supply.price * 0.03
+        sa_percent = self.supply.agent.deal_share
+        ba_percent = self.demand.agent.deal_share
+        return math.floor(price * (ba_percent / 200))
+    
+    @property
+    def company_price(self):
+        price = 0
+        if self.supply.real_estate.type.name == 'Квартира':
+            price += 36000 + 0.01 * self.supply.price
+        if self.supply.real_estate.type.name == 'Участок':
+            price += 30000 + 0.02 * self.supply.price
+        if self.supply.real_estate.type.name == 'Дом':
+            price += 30000 + 0.01 * self.supply.price
+        price += self.supply.price * 0.03
+        sa_percent = self.supply.agent.deal_share
+        ba_percent = self.demand.agent.deal_share
+        return math.floor(price * ((200 - ba_percent - sa_percent) / 200))

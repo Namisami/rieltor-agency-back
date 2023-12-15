@@ -80,7 +80,9 @@ class ObjectViewSet(viewsets.ModelViewSet):
                 if log > max_log:
                     max_log = log
             print(min_log, min_lat, max_log, max_lat)
-            self.queryset = [query for query in self.queryset if (query.latitude in [min_lat, max_lat]) and (query.logitude in [min_log, max_log])]
+            self.queryset = [query for query in self.queryset 
+                             if ((min_lat <= query.latitude) and (query.latitude <= max_lat)) 
+                             and ((min_log <= query.logitude) and (query.logitude <= max_log))]
         city = self.request.query_params.get('city')
         if city is not None:
             self.queryset = [query for query in self.queryset if distance(query.address_city, city) <= 3]

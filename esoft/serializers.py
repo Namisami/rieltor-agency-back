@@ -51,9 +51,17 @@ class DemandSerializers(serializers.HyperlinkedModelSerializer):
             
     class Meta:
         model = Demand
-        fields = '__all__'
+        fields = ['id', 'url', 'address_city', 'address_street', 'address_house', 'address_number', 'min_price', 'max_price', 'agent', 'client', 'type', 'min_area', 'max_area', 'min_rooms', 'max_rooms', 'min_floor', 'max_floor', 'min_floors', 'max_floors', 'active']
 
 class DealSerializers(serializers.HyperlinkedModelSerializer):
+    def __init__(self, *args, **kwargs):
+        super(DealSerializers, self).__init__(*args, **kwargs)
+        request = self.context.get('request')
+        if request and (request.method == 'POST' or request.method == 'PUT' or request.method == 'PATCH'):
+            self.Meta.depth = 0
+        else:
+            self.Meta.depth = 2
+            
     class Meta:
         model = Deal
-        fields = '__all__'
+        fields = ['id', 'url', 'supply', 'demand', 'seller_price', 'buyer_price', 'seller_agent_price', 'buyer_agent_price', 'company_price']

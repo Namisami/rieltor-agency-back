@@ -15,7 +15,7 @@ class ClientViewSet(viewsets.ModelViewSet):
         fio = self.request.query_params.get('fio')
         if fio is not None:
             first_name, middle_name, last_name = fio.split(' ')
-            self.queryset = [query for query in self.queryset if distance(query.firstname, first_name) <= 3 and distance(query.lastname, last_name) <= 3 and distance(query.middlename, middle_name) <= 3]
+            self.queryset = [query for query in self.queryset if distance(query.first_name, first_name) <= 3 and distance(query.last_name, last_name) <= 3 and distance(query.middle_name, middle_name) <= 3]
         return self.queryset
     
     @action(methods=['get'], detail=True)
@@ -34,7 +34,7 @@ class AgentViewSet(viewsets.ModelViewSet):
         fio = self.request.query_params.get('fio')
         if fio is not None:
             first_name, middle_name, last_name = fio.split(' ')
-            self.queryset = [query for query in self.queryset if distance(query.firstname, first_name) <= 3 and distance(query.lastname, last_name) <= 3 and distance(query.middlename, middle_name) <= 3]
+            self.queryset = [query for query in self.queryset if distance(query.first_name, first_name) <= 3 and distance(query.last_name, last_name) <= 3 and distance(query.middle_name, middle_name) <= 3]
         return self.queryset
     
     @action(methods=['get'], detail=True)

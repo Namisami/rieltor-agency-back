@@ -37,13 +37,13 @@ class DistrictSerializers(serializers.HyperlinkedModelSerializer):
 
 class OfferSerializers(serializers.HyperlinkedModelSerializer):
     def __init__(self, *args, **kwargs):
-        super(DemandSerializers, self).__init__(*args, **kwargs)
+        super(OfferSerializers, self).__init__(*args, **kwargs)
         request = self.context.get('request')
         if request and (request.method == 'POST' or request.method == 'PUT' or request.method == 'PATCH'):
             self.Meta.depth = 0
         else:
             self.Meta.depth = 1
-            
+
     class Meta:
         model = Offer
         fields = '__all__'
